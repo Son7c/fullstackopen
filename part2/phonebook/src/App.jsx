@@ -32,12 +32,13 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ filteredPersons }) => {
+const Persons = ({ filteredPersons,handleDelete }) => {
   return (
     <ul>
       {filteredPersons.map((person) => (
         <li key={person.id}>
           {person.name} &nbsp; {person.number}
+          <button onClick={()=>handleDelete(person.id)}>Delete</button>
         </li>
       ))}
     </ul>
@@ -51,9 +52,7 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    personService
-    .getAll().
-    then((data) => {
+    personService.getAll().then((data) => {
       setPersons(data);
     });
   }, []);
@@ -68,13 +67,23 @@ const App = () => {
       return;
     }
     const newPerson = {
-    name: newName,
-    number: newNo
-  }
-    personService.create(newPerson)
-    .then(res=>setPersons(persons.concat(res)))
+      name: newName,
+      number: newNo,
+    };
+    personService
+      .create(newPerson)
+      .then((res) => setPersons(persons.concat(res)));
     setNewName("");
     setNewNo("");
+  };
+
+  const handleDelete = (id) => {
+    const toDelete = persons.find(person=> person.id === id);
+    const name = toDelete.name;
+    const confirm = window.confirm(`Delete ${name}`);
+    if(!confirm) return;
+    personService.remove(id)
+    .then(()=>setPersons(persons.filter(person=>person.id!==id)));
   };
 
   let filteredPersons = persons.filter((person) =>
@@ -104,7 +113,7 @@ const App = () => {
         newNo={newNo}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete} />
     </div>
   );
 };
