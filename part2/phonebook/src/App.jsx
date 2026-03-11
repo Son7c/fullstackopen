@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const Filter = ({ filter, handleSearchChange }) => {
   return (
@@ -32,13 +33,13 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ filteredPersons,handleDelete }) => {
+const Persons = ({ filteredPersons, handleDelete }) => {
   return (
     <ul>
       {filteredPersons.map((person) => (
         <li key={person.id}>
           {person.name} &nbsp; {person.number}
-          <button onClick={()=>handleDelete(person.id)}>Delete</button>
+          <button onClick={() => handleDelete(person.id)}>Delete</button>
         </li>
       ))}
     </ul>
@@ -50,6 +51,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNo, setNewNo] = useState("");
   const [filter, setFilter] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((data) => {
@@ -61,15 +63,22 @@ const App = () => {
     event.preventDefault();
     let isAvail = persons.some((person) => person.name === newName);
     if (isAvail) {
-      const id=persons.find(person=>person.name===newName).id;
-      const confirm=window.confirm(`${newName} is already added to phonebook Replace old number with new?`);
-      if(!confirm) return;
-      const updatedPerson={
-        name:newName,
-        number:newNo
-      }
-      personService.update(id,updatedPerson)
-      .then((res)=>setPersons(persons.map(person=>person.id!==id?person:res)))
+      const id = persons.find((person) => person.name === newName).id;
+      const confirm = window.confirm(
+        `${newName} is already added to phonebook Replace old number with new?`,
+      );
+      if (!confirm) return;
+      const updatedPerson = {
+        name: newName,
+        number: newNo,
+      };
+      personService.update(id, updatedPerson).then((res) => {
+        setPersons(persons.map((person) => (person.id !== id ? person : res)));
+        setNotification(`Number of ${res.name} updated`);
+        setTimeout(() => {
+          setNotification(null);
+        }, 3000);
+      });
       setNewName("");
       setNewNo("");
       return;
@@ -78,20 +87,25 @@ const App = () => {
       name: newName,
       number: newNo,
     };
-    personService
-      .create(newPerson)
-      .then((res) => setPersons(persons.concat(res)));
+    personService.create(newPerson).then((res) => {
+      setPersons(persons.concat(res));
+      setNotification(`${res.name} added to phonebook`);
+      setTimeout(() => {
+        setNotification(null);
+      }, 3000);
+    });
     setNewName("");
     setNewNo("");
   };
 
   const handleDelete = (id) => {
-    const toDelete = persons.find(person=> person.id === id);
+    const toDelete = persons.find((person) => person.id === id);
     const name = toDelete.name;
     const confirm = window.confirm(`Delete ${name}`);
-    if(!confirm) return;
-    personService.remove(id)
-    .then(()=>setPersons(persons.filter(person=>person.id!==id)));
+    if (!confirm) return;
+    personService
+      .remove(id)
+      .then(() => setPersons(persons.filter((person) => person.id !== id)));
   };
 
   let filteredPersons = persons.filter((person) =>
@@ -109,6 +123,7 @@ const App = () => {
   };
   return (
     <div>
+      <Notification message={notification} />
       <h2>Phonebook</h2>
       <Filter filter={filter} handleSearchChange={handleSearchChange} />
       <br />
