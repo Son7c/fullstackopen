@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 
 const Filter = ({ filter, handleSearchChange }) => {
   return (
@@ -50,19 +50,13 @@ const App = () => {
   const [newNo, setNewNo] = useState("");
   const [filter, setFilter] = useState("");
 
-
-  useEffect(()=>{
-    const fetchPersons=async()=>{
-      const response=await axios.get("http://localhost:3001/persons");
-      setPersons(response.data);
-    }
-    fetchPersons();
-  },[])
-
-
-
-
-
+  useEffect(() => {
+    personService
+    .getAll().
+    then((data) => {
+      setPersons(data);
+    });
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -73,9 +67,12 @@ const App = () => {
       setNewNo("");
       return;
     }
-    setPersons(
-      persons.concat({ name: newName, number: newNo, id: persons.length + 1 }),
-    );
+    const newPerson = {
+    name: newName,
+    number: newNo
+  }
+    personService.create(newPerson)
+    .then(res=>setPersons(persons.concat(res)))
     setNewName("");
     setNewNo("");
   };
@@ -107,7 +104,7 @@ const App = () => {
         newNo={newNo}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons}/>
+      <Persons filteredPersons={filteredPersons} />
     </div>
   );
 };
