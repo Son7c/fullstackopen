@@ -72,13 +72,25 @@ const App = () => {
         name: newName,
         number: newNo,
       };
-      personService.update(id, updatedPerson).then((res) => {
+      personService.update(id, updatedPerson)
+      .then((res) => {
         setPersons(persons.map((person) => (person.id !== id ? person : res)));
         setNotification(`Number of ${res.name} updated`);
         setTimeout(() => {
           setNotification(null);
         }, 3000);
-      });
+      })
+      .catch(()=>{
+        const res=persons.find(p=>p.id===id)
+        setNotification(`${res.name} Has Already Been Removed`);
+        setTimeout(()=>{
+          setNotification(null);
+        },3000);
+      })
+      setPersons(
+      persons.filter(p => p.id !== id)
+    )
+
       setNewName("");
       setNewNo("");
       return;
