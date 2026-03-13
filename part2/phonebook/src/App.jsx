@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import personService from "./services/persons";
 import Notification from "./components/Notification";
+import Error from "./components/Error";
 
 const Filter = ({ filter, handleSearchChange }) => {
   return (
@@ -52,6 +53,7 @@ const App = () => {
   const [newNo, setNewNo] = useState("");
   const [filter, setFilter] = useState("");
   const [notification, setNotification] = useState(null);
+  const [error,setError]=useState(null);
 
   useEffect(() => {
     personService.getAll().then((data) => {
@@ -82,9 +84,9 @@ const App = () => {
       })
       .catch(()=>{
         const res=persons.find(p=>p.id===id)
-        setNotification(`${res.name} Has Already Been Removed`);
+        setError(`${res.name} Has Already Been Removed`);
         setTimeout(()=>{
-          setNotification(null);
+          setError(null);
         },3000);
       })
       setPersons(
@@ -136,6 +138,7 @@ const App = () => {
   return (
     <div>
       <Notification message={notification} />
+      <Error message={error}/>
       <h2>Phonebook</h2>
       <Filter filter={filter} handleSearchChange={handleSearchChange} />
       <br />

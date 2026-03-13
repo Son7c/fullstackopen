@@ -75,3 +75,11 @@ button:focus-visible {
   padding: 10px;
   margin-bottom: 10px;
 }
+.error{
+  color: red;
+  background: lightgray;
+  font-size: 18px;
+  border: 2px solid red;
+  padding: 10px;
+  margin-bottom: 10px;
+}
