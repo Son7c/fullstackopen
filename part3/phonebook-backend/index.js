@@ -37,6 +37,18 @@ app.get('/info',(req,res)=>{
     <p>${date}</p>`;
     res.send(info);
 })
+//Exercise 3.3 
+app.get('/api/persons/:id',(req,res)=>{
+    const id=req.params.id;
+    const person=persons.find(p=>p.id===id);
+    if(!person){
+        res.status(404).json({
+            error:"User missing"
+        })
+    }else{
+        res.send(person);
+    }
+})
 
 const PORT = 3001
 app.listen(PORT, () => {
