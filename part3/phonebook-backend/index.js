@@ -65,6 +65,11 @@ app.post('/api/persons',(req,res)=>{
     if(!person.name || !person.number){
         res.status(400).send("User name or number is missing");
     }
+    //Exercise 3.6
+    const exists=persons.find(p=>p.name===person.name);
+    if(exists){
+        return res.status(400).json({error:"Name must be unique"});
+    }
     const id=Math.floor(Math.random()*10000);
     person={...person,id:String(id)};
     persons=persons.concat(person);
