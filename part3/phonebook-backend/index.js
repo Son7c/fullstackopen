@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-
+app.use(express.json());
 let persons = [
     { 
       "id": "1",
@@ -52,14 +52,24 @@ app.get('/api/persons/:id',(req,res)=>{
 //Exercise 3.4
 app.delete('/api/persons/:id',(req,res)=>{
     const id=req.params.id;
-    const person=persons.find(p=>p.id===id);
+    let person=persons.find(p=>p.id===id);
     if(!person){
         return res.status(404).send("User doesn't exist");
     }
     persons=persons.filter(p=>p.id!==id);
     res.status(200).json(persons).end();
 })
-
+//Exercise 3.5
+app.post('/api/persons',(req,res)=>{
+    let person=req.body;
+    if(!person.name || !person.number){
+        res.status(400).send("User name or number is missing");
+    }
+    const id=Math.floor(Math.random()*10000);
+    person={...person,id:String(id)};
+    persons=persons.concat(person);
+    res.status(200).json(persons);
+})
 
 const PORT = 3001
 app.listen(PORT, () => {
