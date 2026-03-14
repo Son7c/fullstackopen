@@ -49,6 +49,17 @@ app.get('/api/persons/:id',(req,res)=>{
         res.send(person);
     }
 })
+//Exercise 3.4
+app.delete('/api/persons/:id',(req,res)=>{
+    const id=req.params.id;
+    const person=persons.find(p=>p.id===id);
+    if(!person){
+        return res.status(404).send("User doesn't exist");
+    }
+    persons=persons.filter(p=>p.id!==id);
+    res.status(200).json(persons).end();
+})
+
 
 const PORT = 3001
 app.listen(PORT, () => {
