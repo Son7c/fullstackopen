@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const cors = require('cors')
 
 //Exercise 3.8
 morgan.token("body", (req, res) => {
@@ -10,6 +11,7 @@ morgan.token("body", (req, res) => {
 app.use(express.json());
 //3.8
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+app.use(cors())
 
 let persons = [
   {
@@ -83,7 +85,7 @@ app.post("/api/persons", (req, res) => {
   const id = Math.floor(Math.random() * 10000);
   person = { ...person, id: String(id) };
   persons = persons.concat(person);
-  res.status(200).json(persons);
+  res.status(200).json(person);
 });
 
 const PORT = 3001;
