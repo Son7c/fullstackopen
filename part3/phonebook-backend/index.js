@@ -46,15 +46,17 @@ app.get("/api/persons/:id", (req, res) => {
     res.send(person);
   }
 });
-//Exercise 3.4
+//Exercise 3.15
 app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
-  let person = persons.find((p) => p.id === id);
-  if (!person) {
-    return res.status(404).send("User doesn't exist");
-  }
-  persons = persons.filter((p) => p.id !== id);
-  res.status(200).json(persons).end();
+  Phone.findByIdAndDelete(id)
+  .then(()=>{
+    res.status(204).end();
+  })
+  .catch(err=>{
+    console.log(err);
+    res.status(404).end();
+  });
 });
 //Exercise 3.5
 app.post("/api/persons", (req, res) => {
