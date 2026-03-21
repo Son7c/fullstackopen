@@ -26,25 +26,22 @@ app.get("/api/persons", (request, response) => {
   })
 });
 
-//Exercise 3.2: "info" Route
+//Exercise 3.18: "info" Route
 app.get("/info", (req, res) => {
-  const data = persons.length;
-  const date = new Date();
-  const info = `<p>Phonebook has info of ${data} people</p>
-    <p>${date}</p>`;
-  res.send(info);
+  Phone.countDocuments({})
+  .then(count=>{
+    const date = new Date();
+    const info = `<p>Phonebook has info of ${count} people</p> <p>${date}</p>`;
+    res.send(info);
+  })
+  .catch(err=>next(err));
 });
-//Exercise 3.3
-app.get("/api/persons/:id", (req, res) => {
+//Exercise 3.18
+app.get("/api/persons/:id", (req, res,next) => {
   const id = req.params.id;
-  const person = persons.find((p) => p.id === id);
-  if (!person) {
-    res.status(404).json({
-      error: "User missing",
-    });
-  } else {
-    res.send(person);
-  }
+  Phone.findById(id)
+  .then(result=>res.json(result))
+  .catch(err=>next(err));
 });
 //Exercise 3.15
 app.delete("/api/persons/:id", (req, res,next) => {
