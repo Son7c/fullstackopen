@@ -19,6 +19,7 @@ app.use(cors())
 
 
 // Exercise 3.1: Route to return the hardcoded list of persons
+//3.13 (conncected to mongodb)
 app.get("/api/persons", (request, response) => {
   Phone.find({}).then((phones)=>{
     response.json(phones);
@@ -57,19 +58,16 @@ app.delete("/api/persons/:id", (req, res) => {
 });
 //Exercise 3.5
 app.post("/api/persons", (req, res) => {
-  let person = req.body;
-  if (!person.name || !person.number) {
+  let body = req.body;
+  if (!body.name || !body.number) {
     res.status(400).send("User name or number is missing");
   }
-  //Exercise 3.6
-  const exists = persons.find((p) => p.name === person.name);
-  if (exists) {
-    return res.status(400).json({ error: "Name must be unique" });
-  }
-  const id = Math.floor(Math.random() * 10000);
-  person = { ...person, id: String(id) };
-  persons = persons.concat(person);
-  res.status(200).json(person);
+  const person=new Phone({
+    name:body.name,
+    number:body.number
+  });
+  person.save()
+  .then(response=>res.json(response));
 });
 
 const PORT = process.env.PORT || 3001;
