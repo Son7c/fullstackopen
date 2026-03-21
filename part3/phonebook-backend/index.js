@@ -69,6 +69,26 @@ app.post("/api/persons", (req, res) => {
   .then(response=>res.json(response));
 });
 
+//Exercise 3.17
+app.put("/api/persons/:id",(req,res,next)=>{
+  const id=req.params.id;
+  const{name,number}=req.body;
+  const person={
+    name,
+    number
+  }
+  Phone.findByIdAndUpdate(id,person,{new:true})
+  .then(updated=>{
+    if(updated){
+      res.json(updated);
+    }else{
+      res.status(404).end();
+    }
+  })
+  .catch(err=>next(err));
+
+})
+
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
