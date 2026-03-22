@@ -106,7 +106,13 @@ const App = () => {
       setNotification(`${res.name} added to phonebook`);
       setTimeout(() => {
         setNotification(null);
-      }, 3000);
+      }, 3000)
+    })
+    .catch((err)=>{
+      setError(err.response.data.error);
+      setTimeout(()=>{
+        setError(null);
+      },3000);
     });
     setNewName("");
     setNewNo("");

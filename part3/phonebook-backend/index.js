@@ -27,7 +27,7 @@ app.get("/api/persons", (request, response) => {
 });
 
 //Exercise 3.18: "info" Route
-app.get("/info", (req, res) => {
+app.get("/info", (req, res,next) => {
   Phone.countDocuments({})
   .then(count=>{
     const date = new Date();
@@ -53,17 +53,18 @@ app.delete("/api/persons/:id", (req, res,next) => {
   .catch(err=>next(err));
 });
 //Exercise 3.5
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res,next) => {
   let body = req.body;
   if (!body.name || !body.number) {
-    res.status(400).send("User name or number is missing");
+    return res.status(400).send("User name or number is missing");
   }
   const person=new Phone({
     name:body.name,
     number:body.number
   });
   person.save()
-  .then(response=>res.json(response));
+  .then(response=>res.json(response))
+  .catch(err=>next(err));
 });
 
 //Exercise 3.17
@@ -83,7 +84,6 @@ app.put("/api/persons/:id",(req,res,next)=>{
     }
   })
   .catch(err=>next(err));
-
 })
 
 
@@ -92,7 +92,9 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' });
-  } 
+  } else if(error.name==='ValidationError'){
+    return response.status(400).json({error:error.message});
+  }
 
   next(error);
 };
