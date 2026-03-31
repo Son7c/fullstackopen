@@ -44,3 +44,36 @@ describe("Total Likes", () => {
     assert.strictEqual(result,24)
   })
 });
+
+describe('Favorite Blog',()=>{
+    const emptyList = [];
+
+  const listWithOneBlog = [
+    {
+      _id: "5a422aa71b54a676234d17f8",
+      title: "Go To Statement Considered Harmful",
+      author: "Edsger W. Dijkstra",
+      url: "https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf",
+      likes: 5,
+      __v: 0,
+    },
+  ];
+
+  const biggerList = [
+    { title: "React patterns", likes: 7 },
+    { title: "Go To Statement Considered Harmful", likes: 5 },
+    { title: "Canonical string reduction", likes: 12 },
+  ];
+    test('When no Blog is there',()=>{
+        const result=listHelper.favBlog(emptyList);
+        assert.strictEqual(result,null);
+    })
+    test('When one Blog is there',()=>{
+        const result=listHelper.favBlog(listWithOneBlog);
+        assert.strictEqual(result,listWithOneBlog[0]);
+    })
+    test('When multiple blogs are there',()=>{
+        const result=listHelper.favBlog(biggerList);
+        assert.strictEqual(result,biggerList[2])
+    })
+})
