@@ -42,6 +42,14 @@ test.only('all blogs are returned',async()=>{
     const res=await api.get('/api/blogs');
     assert.strictEqual(res.body.length,initialBlogs.length)
 })
+
+test.only('unique identifier property of the blog posts is named id',async()=>{
+    const res=await api.get('/api/blogs');
+    const blogToCheck=res.body[0];
+    assert.ok(blogToCheck);
+    assert.strictEqual(blogToCheck._id,undefined);
+})
+
 after(async()=>{
     mongoose.connection.close();
 })
