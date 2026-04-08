@@ -32,18 +32,18 @@ beforeEach(async()=>{
     await blogObject.save();
 })
 
-test.only('Get Request',async()=>{
+test('Get Request',async()=>{
     await api
         .get('/api/blogs')
         .expect(200)
         .expect('Content-Type', /application\/json/)
 })
-test.only('all blogs are returned',async()=>{
+test('all blogs are returned',async()=>{
     const res=await api.get('/api/blogs');
     assert.strictEqual(res.body.length,initialBlogs.length)
 })
 
-test.only('unique identifier property of the blog posts is named id',async()=>{
+test('unique identifier property of the blog posts is named id',async()=>{
     const res=await api.get('/api/blogs');
     const blogToCheck=res.body[0];
     assert.ok(blogToCheck);
@@ -57,7 +57,7 @@ describe('Testing the Creation of new Post',()=>{
         url: "https://myblog.com/dsa-guide",
         likes: 0,
     };
-    test.only('Creating a new Blog',async()=>{
+    test('Creating a new Blog',async()=>{
         const res=await api
             .post('/api/blogs')
             .send(newBlog)
@@ -69,6 +69,20 @@ describe('Testing the Creation of new Post',()=>{
         assert.strictEqual(res.body.likes,newBlog.likes);
     })
     
+})
+
+test.only('Likes property missing, default to 0',async()=>{
+    const dummyBlog={
+        title: "NO likes",
+        author: "Souvik Majee",
+        url: "https://myblog.com/dsa-guide/nolikes",
+    };
+    const res=await api
+        .post('/api/blogs')
+        .send(dummyBlog)
+        .expect(201)
+        .expect('Content-Type',/application\/json/)
+        assert.strictEqual(res.body.likes,0);
 })
 
 after(async()=>{
