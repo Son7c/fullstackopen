@@ -71,7 +71,7 @@ describe('Testing the Creation of new Post',()=>{
     
 })
 
-test.only('Likes property missing, default to 0',async()=>{
+test('Likes property missing, default to 0',async()=>{
     const dummyBlog={
         title: "NO likes",
         author: "Souvik Majee",
@@ -83,6 +83,17 @@ test.only('Likes property missing, default to 0',async()=>{
         .expect(201)
         .expect('Content-Type',/application\/json/)
         assert.strictEqual(res.body.likes,0);
+})
+
+test.only('MIssing title or url checking',async()=>{
+    const blog={
+        "url": "NOne",
+        "likes": 5
+    }
+    await api
+        .post('/api/blogs')
+        .send(blog)
+        .expect(400)
 })
 
 after(async()=>{
