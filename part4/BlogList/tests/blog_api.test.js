@@ -1,5 +1,5 @@
 const assert = require('node:assert')
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -48,6 +48,27 @@ test.only('unique identifier property of the blog posts is named id',async()=>{
     const blogToCheck=res.body[0];
     assert.ok(blogToCheck);
     assert.strictEqual(blogToCheck._id,undefined);
+})
+
+describe('Testing the Creation of new Post',()=>{
+    const newBlog ={
+        title: "Mastering DSA Step by Step",
+        author: "Souvik Majee",
+        url: "https://myblog.com/dsa-guide",
+        likes: 0,
+    };
+    test.only('Creating a new Blog',async()=>{
+        const res=await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/);
+        assert.strictEqual(res.body.title,newBlog.title);
+        assert.strictEqual(res.body.author,newBlog.author);
+        assert.strictEqual(res.body.url,newBlog.url);
+        assert.strictEqual(res.body.likes,newBlog.likes);
+    })
+    
 })
 
 after(async()=>{
