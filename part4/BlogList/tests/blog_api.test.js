@@ -85,7 +85,7 @@ test('Likes property missing, default to 0',async()=>{
         assert.strictEqual(res.body.likes,0);
 })
 
-test.only('MIssing title or url checking',async()=>{
+test('MIssing title or url checking',async()=>{
     const blog={
         "url": "NOne",
         "likes": 5
@@ -95,6 +95,14 @@ test.only('MIssing title or url checking',async()=>{
         .send(blog)
         .expect(400)
 })
+test.only('Deleting a blog',async()=>{
+    const id="69d6a5869bf51fbcebbf739f";
+    await api
+        .delete(`/api/blogs/${id}`)
+        .expect(200)
+        .expect('Content-Type',/application\/json/)
+})
+
 
 after(async()=>{
     mongoose.connection.close();
