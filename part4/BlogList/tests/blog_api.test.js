@@ -95,7 +95,7 @@ test('MIssing title or url checking',async()=>{
         .send(blog)
         .expect(400)
 })
-test.only('Deleting a blog',async()=>{
+test('Deleting a blog',async()=>{
     const id="69d6a5869bf51fbcebbf739f";
     await api
         .delete(`/api/blogs/${id}`)
@@ -103,6 +103,21 @@ test.only('Deleting a blog',async()=>{
         .expect('Content-Type',/application\/json/)
 })
 
+test.only('Updating a blog',async()=>{
+    const blogs=await api.get('/api/blogs');
+    const blogToUPdate=blogs.body[0];
+
+    const updatedBlog={
+        ...blogToUPdate,
+        likes:100
+    }
+    const id=blogToUPdate.id;
+    const res=await api
+        .put(`/api/blogs/${id}`)
+        .send(updatedBlog)
+        .expect(200)
+    assert.strictEqual(res.body.likes,updatedBlog.likes);  
+})
 
 after(async()=>{
     mongoose.connection.close();

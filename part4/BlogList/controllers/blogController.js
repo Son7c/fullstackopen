@@ -1,3 +1,4 @@
+const { response } = require("../app")
 const Blog = require("../models/blogs")
 const express = require('express')
 const blogRouter = express.Router()
@@ -22,7 +23,17 @@ blogRouter.post('/', (request, response) => {
 
 blogRouter.delete('/:id',async(req,res)=>{
   const id=req.params.id;
-  const response=await Blog.findByIdAndDelete({_id:id});
+  const response=await Blog.findByIdAndDelete(id);
+  res.status(200).json(response);
+})
+
+blogRouter.put('/:id',async(req,res)=>{
+  const id=req.params.id;
+  const newBlog=req.body;
+  const response=await Blog.findByIdAndUpdate(id,newBlog,{ returnDocument: 'after' });
+  if (!response) {
+    return res.status(404).json({ error: "blog not found" });
+  }
   res.status(200).json(response);
 })
 
