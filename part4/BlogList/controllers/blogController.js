@@ -1,4 +1,3 @@
-const { response } = require("../app")
 const Blog = require("../models/blogs")
 const express = require('express')
 const blogRouter = express.Router()
