@@ -1,19 +1,23 @@
 const Blog = require("../models/blogs")
-const express = require('express')
+const express = require('express');
+const User = require("../models/users");
 const blogRouter = express.Router()
 
-blogRouter.get('/', (request, response) => {
-  Blog.find({}).then((blogs) => {
-    response.json(blogs)
-  })
+blogRouter.get('/', async (request, response) => {
+  const blogs=await Blog.find({}).populate('user');
+  response.json(blogs);
 })
 
-blogRouter.post('/', (request, response) => {
+blogRouter.post('/', async (request, response) => {
+  const user = await User.findOne();
   const{title,url}=request.body;
   if(!title||!url){
     return response.status(400).json({ error: "title and url required" });
   }
-  const blog = new Blog(request.body);
+  const blog = new Blog({
+    ...request.body,
+    user:user.id
+  });
 
   blog.save().then((result) => {
     response.status(201).json(result)

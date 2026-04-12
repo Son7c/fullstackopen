@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const blogSchema = mongoose.Schema({
   title: String,
   author: String,
+  user: { 
+    type:Schema.Types.ObjectId,
+    ref: 'User'
+  },
   url: String,
   likes: {
     type:Number,
