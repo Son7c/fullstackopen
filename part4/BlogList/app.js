@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const {MONGODB_URI}=require('./utils/config');
+const middleware = require('./utils/middileware')
 
 const app = express()
 const blogRouter =require('./controllers/blogController')
@@ -14,6 +15,7 @@ mongoose.connect(mongoUrl, { family: 4 })
 
 app.use(cors()) 
 app.use(express.json())
+app.use(middleware.tokenExtractor);
 app.use('/api/blogs',blogRouter);
 app.use('/api/users',userRouter);
 app.use('/api/login',loginRouter);
