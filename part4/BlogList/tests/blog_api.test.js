@@ -5,6 +5,10 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 
+const User = require('../models/users')
+const bcrypt = require('bcrypt')
+let token=null;
+
 const Blog=require('../models/blogs');
 
 const initialBlogs = [
@@ -23,13 +27,24 @@ const initialBlogs = [
 ]
 
 beforeEach(async()=>{
-    await Blog.deleteMany({});
+    await User.deleteMany({});
+    await Blog.deleteMany({})
+    const passwordHash=await bcrypt.hash("secret",10);
+    const user=new User({username:"test",passwordHash});
+    await user.save();
 
-    let blogObject=new Blog(initialBlogs[0]);
-    await blogObject.save();
+    const loginRes=await api
+                    .post('/api/login')
+                    .send({username:"test",password:"secret"})
+    
+    token=loginRes.body.token;
 
-    blogObject=new Blog(initialBlogs[1]);
-    await blogObject.save();
+    const blogObject=initialBlogs.map(blog=>new Blog({
+        ...blog,
+        user:user._id
+    }))
+    const promiseArray = blogObject.map(blog => blog.save())
+    await Promise.all(promiseArray);
 })
 
 test('Get Request',async()=>{
@@ -61,6 +76,7 @@ describe('Testing the Creation of new Post',()=>{
         const res=await api
             .post('/api/blogs')
             .send(newBlog)
+            .set('Authorization',`Bearer ${token}`)
             .expect(201)
             .expect('Content-Type', /application\/json/);
         assert.strictEqual(res.body.title,newBlog.title);
@@ -80,6 +96,7 @@ test('Likes property missing, default to 0',async()=>{
     const res=await api
         .post('/api/blogs')
         .send(dummyBlog)
+        .set('Authorization',`Bearer ${token}`)
         .expect(201)
         .expect('Content-Type',/application\/json/)
         assert.strictEqual(res.body.likes,0);
@@ -93,14 +110,16 @@ test('MIssing title or url checking',async()=>{
     await api
         .post('/api/blogs')
         .send(blog)
+        .set('Authorization',`Bearer ${token}`)
         .expect(400)
 })
 test('Deleting a blog',async()=>{
-    const id="69d6a5869bf51fbcebbf739f";
+    const blogs=await api.get("/api/blogs");
+    const id=blogs.body[0].id;
     await api
         .delete(`/api/blogs/${id}`)
-        .expect(200)
-        .expect('Content-Type',/application\/json/)
+        .set('Authorization',`Bearer ${token}`)
+        .expect(204)
 })
 
 test.only('Updating a blog',async()=>{
@@ -115,6 +134,7 @@ test.only('Updating a blog',async()=>{
     const res=await api
         .put(`/api/blogs/${id}`)
         .send(updatedBlog)
+        .set('Authorization',`Bearer ${token}`)
         .expect(200)
     assert.strictEqual(res.body.likes,updatedBlog.likes);  
 })
