@@ -4,6 +4,11 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import "./index.css";
 
+
+import LoginForm from "./components/LoginForm";
+import Togglable from "./components/Togglable";
+import BlogForm from "./components/BlogForm";
+
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
@@ -26,70 +31,22 @@ const App = () => {
     }
   }, []);
 
-  const loginForm = () => {
-    return (
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            Username
-            <input
-              type="text"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-            ></input>
-          </label>
-        </div>
-        <div>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            ></input>
-          </label>
-        </div>
-        <button>Submit</button>
-      </form>
-    );
+  const handleUserNameChange = (event) => {
+    setUsername(event.target.value);
+  };
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
-  const blogForm = () => {
-    return (
-      <form onSubmit={handleCreateBlog}>
-        <label>
-          title:
-          <input
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          author:{" "}
-          <input
-            type="text"
-            value={author}
-            onChange={(event) => setAuthor(event.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          url:{" "}
-          <input
-            type="text"
-            value={url}
-            onChange={(event) => {
-              setUrl(event.target.value);
-            }}
-          />
-        </label>
-        <br />
-        <button>Create</button>
-      </form>
-    );
-  };
+  const handleTitleChange=(event)=>{
+    setTitle(event.target.value);
+  }
+  const handleAuthorChange=(event)=>{
+    setAuthor(event.target.value);
+  }
+  const handleUrlChange=(event)=>{
+    setUrl(event.target.value);
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -102,14 +59,12 @@ const App = () => {
       const personalBlogs = await blogService.getMyBlogs();
       setBlogs(personalBlogs);
 
-
       setSuccessMsg(`${res.name} logged in successfully!`);
 
       setTimeout(() => {
         setSuccessMsg(null);
       }, 5000);
 
-      
       setUsername("");
       setPassword("");
     } catch {
@@ -157,7 +112,11 @@ const App = () => {
       {successMsg && <h2 className="succ-msg">{successMsg}</h2>}
 
       {!user ? <h2>Login</h2> : ""}
-      {!user && loginForm()}
+      {!user && 
+        <Togglable buttonLabel={"Login"}>
+          <LoginForm handleLogin={handleLogin} username={username} handleUserNameChange={handleUserNameChange} handlePasswordChange={handlePasswordChange} password={password}/>
+        </Togglable>
+      }
 
       {user && (
         <div>
@@ -166,8 +125,10 @@ const App = () => {
             <p>{user.name} Logged in</p>
             <button onClick={handleLogOut}>Log Out</button>
           </div>
-          <h2>Create new</h2>
-          {blogForm()}
+          <Togglable buttonLabel={"Create"}>
+            <h2>Create new</h2>
+            <BlogForm title={title} author={author} url={url} handleTitleChange={handleTitleChange} handleAuthorChange={handleAuthorChange} handleUrlChange={handleUrlChange} handleCreateBlog={handleCreateBlog}/>
+          </Togglable>
           <br />
           <br />
           <br />
