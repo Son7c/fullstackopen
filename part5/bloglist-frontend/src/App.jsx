@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import "./index.css";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -9,7 +10,7 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [successMsg,setSuccessMsg]=useState('');
+  const [successMsg, setSuccessMsg] = useState("");
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -101,6 +102,14 @@ const App = () => {
       const personalBlogs = await blogService.getMyBlogs();
       setBlogs(personalBlogs);
 
+
+      setSuccessMsg(`${res.name} logged in successfully!`);
+
+      setTimeout(() => {
+        setSuccessMsg(null);
+      }, 5000);
+
+      
       setUsername("");
       setPassword("");
     } catch {
@@ -131,7 +140,9 @@ const App = () => {
       setTitle("");
       setAuthor("");
       setUrl("");
-      setSuccessMsg(`A new blog ${savedBlog.title} by ${savedBlog.author} added`);
+      setSuccessMsg(
+        `A new blog ${savedBlog.title} by ${savedBlog.author} added`,
+      );
       setTimeout(() => setSuccessMsg(null), 5000);
     } catch (error) {
       setErrorMessage("Failed to create blog. Check all fields.");
@@ -141,8 +152,10 @@ const App = () => {
 
   return (
     <div>
-      <h2 className="err-msg">{errorMessage}</h2>
-      <h2 className="succ-msg">{successMsg}</h2>
+      {errorMessage && <h2 className="err-msg">{errorMessage}</h2>}
+
+      {successMsg && <h2 className="succ-msg">{successMsg}</h2>}
+
       {!user ? <h2>Login</h2> : ""}
       {!user && loginForm()}
 

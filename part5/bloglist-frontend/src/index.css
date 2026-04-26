@@ -1,0 +1,12 @@
+.err-msg{
+    background-color: rgb(235, 219, 219);
+    border: 2px solid red;
+    color: red;
+    height: 2rem;
+}
+.succ-msg{
+    background-color: rgb(154, 146, 146);
+    border: 2px solid rgb(101, 230, 101);
+    color: rgb(44, 147, 44);
+    height: 2rem;
+}
