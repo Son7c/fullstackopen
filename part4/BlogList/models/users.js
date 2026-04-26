@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const userSchema=mongoose.Schema({
-    blogs:{
+    blogs:[{
       type:Schema.Types.ObjectId,
       ref:'Blog'
-    },
+    }],
     username:{
       type:String,
       required:true,

@@ -31,4 +31,21 @@ userRouter.get('/',async(req,res)=>{
     res.status(200).json(users);
 })
 
+userRouter.put('/:id',async(req,res)=>{
+    const id=req.params.id;
+    const{blogs}=req.body;
+    const user=await User.findById(id);
+    if(!user){
+        res.status(404).json({"error":"User not found"});
+    }
+    user={
+        ...user,
+        blogs
+    }
+    const updatedUser=await User.findByIdAndUpdate(id,user,{
+      returnDocument: "after",
+    });
+    res.status(200).json(updatedUser);
+})
+
 module.exports=userRouter;

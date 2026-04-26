@@ -27,6 +27,10 @@ blogRouter.post("/", async (request, response) => {
     });
 
     const savedBlog = await blog.save();
+
+    await User.findByIdAndUpdate(user._id, {
+      $push: { blogs: savedBlog._id }
+    });
     response.status(201).json(savedBlog);
   } catch (error) {
     return response.status(401).json({ error: "invalid token" });
@@ -87,8 +91,8 @@ blogRouter.get("/my-blogs", async (req, res) => {
     }
     const myBlogs = await Blog.find({ user: user._id }).populate("user");
     res.send(myBlogs);
-  } catch(err) {
-    res.status(404).json({error:"No data found"});
+  } catch (err) {
+    res.status(404).json({ error: "No data found" });
   }
 });
 
