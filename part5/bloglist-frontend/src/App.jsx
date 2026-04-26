@@ -4,7 +4,6 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import "./index.css";
 
-
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
@@ -15,10 +14,7 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [successMsg, setSuccessMsg] = useState("");
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const [successMsg, setSuccessMsg] = useState(null);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedInBlogUser");
@@ -37,16 +33,6 @@ const App = () => {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
-
-  const handleTitleChange=(event)=>{
-    setTitle(event.target.value);
-  }
-  const handleAuthorChange=(event)=>{
-    setAuthor(event.target.value);
-  }
-  const handleUrlChange=(event)=>{
-    setUrl(event.target.value);
-  }
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -80,28 +66,23 @@ const App = () => {
     blogService.setToken(null);
   };
 
-  const handleCreateBlog = async () => {
-    event.preventDefault();
+  const addBlog = async (blogObj) => {
     try {
-      const newBlog = {
-        title,
-        author,
-        url,
-      };
-
-      const savedBlog = await blogService.createBlog(newBlog);
-
+      const savedBlog = await blogService.createBlog(blogObj);
       setBlogs(blogs.concat(savedBlog));
-      setTitle("");
-      setAuthor("");
-      setUrl("");
+
       setSuccessMsg(
-        `A new blog ${savedBlog.title} by ${savedBlog.author} added`,
+        `A new blog "${savedBlog.title}" by ${savedBlog.author} added`,
       );
-      setTimeout(() => setSuccessMsg(null), 5000);
+
+      setTimeout(() => {
+        setSuccessMsg(null);
+      }, 5000);
     } catch (error) {
-      setErrorMessage("Failed to create blog. Check all fields.");
-      setTimeout(() => setErrorMessage(null), 5000);
+      setErrorMessage(error.message);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     }
   };
 
@@ -112,11 +93,17 @@ const App = () => {
       {successMsg && <h2 className="succ-msg">{successMsg}</h2>}
 
       {!user ? <h2>Login</h2> : ""}
-      {!user && 
+      {!user && (
         <Togglable buttonLabel={"Login"}>
-          <LoginForm handleLogin={handleLogin} username={username} handleUserNameChange={handleUserNameChange} handlePasswordChange={handlePasswordChange} password={password}/>
+          <LoginForm
+            handleLogin={handleLogin}
+            username={username}
+            handleUserNameChange={handleUserNameChange}
+            handlePasswordChange={handlePasswordChange}
+            password={password}
+          />
         </Togglable>
-      }
+      )}
 
       {user && (
         <div>
@@ -127,7 +114,7 @@ const App = () => {
           </div>
           <Togglable buttonLabel={"Create"}>
             <h2>Create new</h2>
-            <BlogForm title={title} author={author} url={url} handleTitleChange={handleTitleChange} handleAuthorChange={handleAuthorChange} handleUrlChange={handleUrlChange} handleCreateBlog={handleCreateBlog}/>
+            <BlogForm handleCreateBlog={addBlog} />
           </Togglable>
           <br />
           <br />
