@@ -1,20 +1,20 @@
-import { useState } from "react";
-import Togglable from "./Togglable";
+import { useState } from 'react'
+import Togglable from './Togglable'
 
 const Blog = ({ blog,handleBlogDelete,handleLike }) => {
-  const [view, setView] = useState(false);
+  const [view, setView] = useState(false)
 
-  const handleLikeUpdate=(event)=>{
-    event.preventDefault();
-    handleLike(blog);
+  const handleLikeUpdate=(event) => {
+    event.preventDefault()
+    handleLike(blog)
   }
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: "solid",
+    border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  };
+  }
   return (
     <div style={blogStyle}>
       {blog.title}
@@ -29,17 +29,17 @@ const Blog = ({ blog,handleBlogDelete,handleLike }) => {
           Blog created by {blog.user.name}
           <br />
           <button style={{
-            backgroundColor:"blue",
-            color:"white",
-            cursor:"pointer"
-          }} onClick={()=>handleBlogDelete(blog)}>Delete</button>
+            backgroundColor:'blue',
+            color:'white',
+            cursor:'pointer'
+          }} onClick={() => handleBlogDelete(blog)}>Delete</button>
         </div>
       ) : (
-        ""
+        ''
       )}
-      <button onClick={() => setView(!view)}>{view ? "cancel" : "view"}</button>
+      <button onClick={() => setView(!view)}>{view ? 'cancel' : 'view'}</button>
     </div>
-  );
-};
+  )
+}
 
-export default Blog;
+export default Blog
