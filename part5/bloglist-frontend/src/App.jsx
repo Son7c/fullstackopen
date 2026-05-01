@@ -86,6 +86,7 @@ const App = () => {
     }
   };
 
+  const sortedBlogs=[...blogs].sort((a,b)=>a.likes-b.likes);
   return (
     <div>
       {errorMessage && <h2 className="err-msg">{errorMessage}</h2>}
@@ -119,7 +120,7 @@ const App = () => {
           <br />
           <br />
           <br />
-          {blogs.map((blog) => (
+          {sortedBlogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
 
