@@ -86,7 +86,36 @@ const App = () => {
     }
   };
 
-  const sortedBlogs=[...blogs].sort((a,b)=>a.likes-b.likes);
+  const handleBlogDelete = async (blogObj) => {
+    const id = blogObj.id;
+    if (window.confirm(`Remove blog ${blogObj.title} by ${blogObj.author}?`)) {
+      try {
+        await blogService.deleteBlog(id);
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+        setSuccessMsg(`Deleted ${blogObj.title}`);
+        setTimeout(() => setSuccessMsg(null), 5000);
+      } catch (err) {
+        setErrorMessage(err.message);
+        setTimeout(setErrorMessage(null), 5000);
+      }
+    }
+  };
+
+  const handleLike = async (blog) => {
+    const newObj = {
+      ...blog,
+      likes: blog.likes + 1,
+      user: blog.user.id,
+    };
+    try {
+      const updatedBlog=await blogService.updateBlog(blog.id, newObj);
+      setBlogs(blogs.map(b=>b.id!==blog.id?b:updatedBlog))
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const sortedBlogs = [...blogs].sort((a, b) => a.likes - b.likes);
   return (
     <div>
       {errorMessage && <h2 className="err-msg">{errorMessage}</h2>}
@@ -121,7 +150,12 @@ const App = () => {
           <br />
           <br />
           {sortedBlogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleBlogDelete={handleBlogDelete}
+              handleLike={handleLike}
+            />
           ))}
 
           <br></br>
