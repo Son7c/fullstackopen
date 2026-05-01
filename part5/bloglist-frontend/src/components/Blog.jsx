@@ -37,6 +37,8 @@ const Blog = ({ blog }) => {
           {likes} <button onClick={handleLikeUpdate}>like</button>
           <br />
           {blog.author}
+          <br />
+          Blog created by {blog.user.name}
         </div>
       ) : (
         ""
