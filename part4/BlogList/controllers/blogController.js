@@ -73,7 +73,7 @@ blogRouter.put("/:id", async (req, res) => {
     };
     const response = await Blog.findByIdAndUpdate(id, newBlog, {
       returnDocument: "after",
-    });
+    }).populate("user");
     if (!response) {
       return res.status(404).json({ error: "blog not found" });
     }

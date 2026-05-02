@@ -1,4 +1,4 @@
-import { render,screen } from "@testing-library/react";
+import { getByText, render,screen } from "@testing-library/react";
 import Blog from "./Blog"
 import userEvent from '@testing-library/user-event'
 
@@ -43,5 +43,30 @@ test('Rendering when button is clicked',async ()=>{
     const likes=screen.queryByText(7);
 
     expect(title,author,url,likes).toBeDefined()
-    screen.debug()
+})
+
+test('Checking if the like button is clicked 2 times',async()=>{
+
+    const mockHandler = vi.fn()
+
+    const blog={
+        title:'Testing rendering of component',
+        author:"Panda",
+        url:"https://www.google.com",
+        likes:7,
+        user:{
+            name:"Souvik Majee"
+        }
+    }
+
+    render(<Blog blog={blog} handleLike={mockHandler}/>);
+    
+    const user=userEvent.setup();
+
+    await user.click(screen.getByText('view'));
+    const btn=screen.getByText('like')
+
+    await user.click(btn)
+    await user.click(btn)
+    expect(mockHandler.mock.calls).toHaveLength(2);
 })
