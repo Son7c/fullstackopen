@@ -17,7 +17,8 @@ const Blog = ({ blog,handleBlogDelete,handleLike }) => {
   }
   return (
     <div style={blogStyle}>
-      {blog.title}
+      {blog.title}by&nbsp;
+      <h3>{blog.author}</h3>
       {view ? (
         <div>
           <a href={blog.url}>{blog.url}</a>
