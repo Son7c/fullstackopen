@@ -1,6 +1,7 @@
 import { getByText, render,screen } from "@testing-library/react";
 import Blog from "./Blog"
 import userEvent from '@testing-library/user-event'
+import BlogForm from "./BlogForm"
 
 test('renders Blog',()=>{
     const blog={
